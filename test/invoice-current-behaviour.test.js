@@ -20,10 +20,12 @@ test('CURRENT BEHAVIOUR: billing and invoice totals match for ordinary lines', (
   assert.equal(figures.total, billed.total);
 });
 
-test('CURRENT BEHAVIOUR: coupon changes total tax while displayed line gross stays undiscounted', () => {
+test('CURRENT BEHAVIOUR: coupon changes billed total but invoice line gross stays undiscounted', () => {
   const items = [{ id: 1, name: 'Rice', sku: 'R1', hsn: '1006', price: 500, qty: 1 }];
   const billed = pricing.computeTotals(items, 'SAVE10');
-  const figures = invoice.computeInvoiceFigures({ items, coupon: 'SAVE10', total: billed.total });
+  const order = { id: 43, date: '2026-01-01', items, coupon: 'SAVE10', total: billed.total };
+  const figures = invoice.computeInvoiceFigures(order);
+  const html = invoice.render(order);
 
   assert.equal(billed.discount, 50);
   assert.equal(billed.tax, 22.5);
@@ -32,6 +34,8 @@ test('CURRENT BEHAVIOUR: coupon changes total tax while displayed line gross sta
   assert.equal(figures.rows[0].lineTax, 22.5);
   assert.equal(figures.rows[0].line + figures.rows[0].lineTax, 522.5);
   assert.equal(figures.total, 472.5);
+  assert.match(html, /₹500\.00/);
+  assert.match(html, /₹472\.50/);
 });
 
 test('CURRENT BEHAVIOUR: invoice renders reconciliation notice when ledger total differs', () => {
