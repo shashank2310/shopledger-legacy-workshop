@@ -2,3 +2,5 @@ node_modules/
 .DS_Store
 *.bak
 data/*.tmp.json
+/.vs/CopilotSnapshots/6F8DDA0128BD8548B57245384743DBE2
+/.vs/shopledger-legacy-workshop/FileContentIndex
